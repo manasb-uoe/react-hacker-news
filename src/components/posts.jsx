@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import ChatBubble from "@material-ui/icons/ChatBubbleOutline";
@@ -26,7 +26,10 @@ const PostsWithoutStyles = ({ posts, loadPosts, match, classes }) => {
             const type = match.path.startsWith("/")
                 ? match.path.slice(1)
                 : match.path;
-            loadPosts(type);
+
+            if (type !== posts.type) {
+                loadPosts(type);
+            }
         },
         [match.path]
     );

@@ -6,6 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import withStyles from "@material-ui/core/styles/withStyles";
+import { Link } from "react-router-dom";
 
 const postsStyles = {
     postsContainer: {
@@ -13,23 +14,26 @@ const postsStyles = {
     },
     centeredDiv: {
         textAlign: "center"
+    },
+    post: {
+        marginBottom: "5px"
     }
 };
 
-const PostsWithoutStyles = ({ posts, updateType, match, classes }) => {
+const PostsWithoutStyles = ({ posts, loadPosts, match, classes }) => {
     useEffect(
         () => {
             const type = match.path.startsWith("/")
                 ? match.path.slice(1)
                 : match.path;
-            updateType(type);
+            loadPosts(type);
         },
         [match.path]
     );
 
     return (
         <div className={classes.postsContainer}>
-            <Grid container>
+            <Grid container justify='center'>
                 {posts.loading && (
                     <div className={classes.centeredDiv}>
                         <CircularProgress />
@@ -45,7 +49,7 @@ const PostsWithoutStyles = ({ posts, updateType, match, classes }) => {
                     posts.items.length > 0 && (
                         <Grid item md={12} lg={8}>
                             {posts.items.map(post => (
-                                <Post key={post.id} post={post} />
+                                <Post className={classes.post} key={post.id} post={post} />
                             ))}
                         </Grid>
                     )}
@@ -57,9 +61,6 @@ const PostsWithoutStyles = ({ posts, updateType, match, classes }) => {
 export const Posts = withStyles(postsStyles)(PostsWithoutStyles);
 
 const postStyles = theme => ({
-    card: {
-        marginBottom: '5px'
-    },
     cardContentWrapper: {
         display: "flex",
         flexDirection: "row",
@@ -92,13 +93,16 @@ const postStyles = theme => ({
     numComments: {
         color: theme.palette.text.secondary,
         marginTop: "-10px",
-        fontSize: '90%'
+        fontSize: "90%"
+    },
+    commentsLink: {
+        textDecoration: 'none'
     }
 });
 
-const PostWithoutStyles = ({ post, classes }) => {
+const PostWithoutStyles = ({ post, classes, className }) => {
     return (
-        <Card className={classes.card}>
+        <Card className={className}>
             <CardContent>
                 <div className={classes.cardContentWrapper}>
                     <div className={classes.centeredFlexRow}>
@@ -116,7 +120,9 @@ const PostWithoutStyles = ({ post, classes }) => {
                     </div>
                     <div className={classes.commentsWrapper}>
                         <IconButton>
-                            <ChatBubble />
+                            <Link className={classes.commentsLink} to={"/item/" + post.id}>
+                                <ChatBubble color='secondary' />
+                            </Link>
                         </IconButton>
                         <div className={classes.numComments}>
                             {post.comments_count}
@@ -128,4 +134,4 @@ const PostWithoutStyles = ({ post, classes }) => {
     );
 };
 
-const Post = withStyles(postStyles)(PostWithoutStyles);
+export const Post = withStyles(postStyles)(PostWithoutStyles);

@@ -27,7 +27,7 @@ const HeaderWithoutRouterAndStyles = ({ type, history, classes }) => {
         <AppBar className={classes.appBar} color="primary">
             <Toolbar>
                 <Typography variant="title" color="inherit">
-                    Hacker News
+                    Hacker News - Material UI
                 </Typography>
                 <Tabs className={classes.tabs} value={type} centered onChange={onTabSelected}>
                     {NEWS_TYPES.map(route => (

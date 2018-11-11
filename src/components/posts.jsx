@@ -27,7 +27,7 @@ const PostsWithoutStyles = ({ posts, loadPosts, match, classes }) => {
                 ? match.path.slice(1)
                 : match.path;
 
-            if (type !== posts.type) {
+            if (posts.items.length === 0 || type !== posts.type) {
                 loadPosts(type);
             }
         },

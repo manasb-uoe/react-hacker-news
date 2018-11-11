@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import ChatBubble from "@material-ui/icons/Chat";
+import ChatBubble from "@material-ui/icons/ChatBubbleOutline";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";

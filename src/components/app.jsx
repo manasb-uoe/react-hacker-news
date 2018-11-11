@@ -7,7 +7,7 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import blue from "@material-ui/core/colors/blue";
 import red from "@material-ui/core/colors/red";
 
-export const NEWS_TYPES = ["best", "news", "newest"];
+export const NEWS_TYPES = ["best", "newest"];
 
 const theme = createMuiTheme({
     palette: {
@@ -18,7 +18,7 @@ const theme = createMuiTheme({
 
 export const App = () => {
     const [posts, setPosts] = useState({
-        type: "news",
+        type: "best",
         items: [],
         loading: false
     });

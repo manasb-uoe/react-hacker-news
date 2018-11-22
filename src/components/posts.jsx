@@ -3,6 +3,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import ChatBubble from "@material-ui/icons/ChatBubbleOutline";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -17,45 +18,112 @@ const postsStyles = {
     },
     post: {
         marginBottom: "5px"
+    },
+    navigationButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: "10px 0"
     }
 };
 
-const PostsWithoutStyles = ({ posts, loadPosts, match, classes }) => {
+const PostsWithoutStyles = ({
+    posts,
+    loadPosts,
+    match,
+    location,
+    history,
+    classes
+}) => {
+    const page =
+        parseInt(new URLSearchParams(location.search).get("page")) ||
+        posts.page;
+
     useEffect(
         () => {
             const type = match.path.startsWith("/")
                 ? match.path.slice(1)
                 : match.path;
 
-            if (posts.items.length === 0 || type !== posts.type) {
-                loadPosts(type);
+            if (
+                posts.items.length === 0 ||
+                type !== posts.type ||
+                page !== posts.page
+            ) {
+                loadPosts(type, page);
             }
         },
-        [match.path]
+        [match.path, location.search]
     );
+
+    const onPageNavigationClick = page => {
+        history.push({
+            pathname: location.path,
+            search: "?page=" + page
+        });
+    };
+
+    const renderPosts = () => {
+        if (posts.loading) {
+            return <CircularProgress />;
+        } else if (posts.items.length == 0) {
+            return <div className={classes.centeredDiv}>No posts found :(</div>;
+        } else {
+            return (
+                <Grid item md={12} lg={8}>
+                    {posts.items.map(post => (
+                        <Post
+                            className={classes.post}
+                            key={post.id}
+                            post={post}
+                        />
+                    ))}
+                    <div className={classes.navigationButtonsContainer}>
+                        <Button
+                            onClick={e => onPageNavigationClick(page - 1)}
+                            fullWidth
+                            disabled={posts.page === 1}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            onClick={e => onPageNavigationClick(page + 1)}
+                            fullWidth
+                        >
+                            Next
+                        </Button>
+                    </div>
+                </Grid>
+            );
+        }
+    };
+
+    {
+        posts.loading && (
+            <div className={classes.centeredDiv}>
+                <CircularProgress />
+            </div>
+        );
+    }
+    {
+        !posts.loading && posts.items.length === 0 && (
+            <div className={classes.centeredDiv}>No posts found :(</div>
+        );
+    }
+    {
+        !postMessage.loading && posts.items.length > 0 && (
+            <Grid item md={12} lg={8}>
+                {posts.items.map(post => (
+                    <Post className={classes.post} key={post.id} post={post} />
+                ))}
+            </Grid>
+        );
+    }
 
     return (
         <div className={classes.postsContainer}>
-            <Grid container justify='center'>
-                {posts.loading && (
-                    <div className={classes.centeredDiv}>
-                        <CircularProgress />
-                    </div>
-                )}
-                {!posts.loading &&
-                    posts.items.length === 0 && (
-                        <div className={classes.centeredDiv}>
-                            No posts found :(
-                        </div>
-                    )}
-                {!postMessage.loading &&
-                    posts.items.length > 0 && (
-                        <Grid item md={12} lg={8}>
-                            {posts.items.map(post => (
-                                <Post className={classes.post} key={post.id} post={post} />
-                            ))}
-                        </Grid>
-                    )}
+            <Grid container justify="center">
+                {renderPosts()}
             </Grid>
         </div>
     );
@@ -99,7 +167,7 @@ const postStyles = theme => ({
         fontSize: "90%"
     },
     commentsLink: {
-        textDecoration: 'none'
+        textDecoration: "none"
     }
 });
 
@@ -123,8 +191,11 @@ const PostWithoutStyles = ({ post, classes, className }) => {
                     </div>
                     <div className={classes.commentsWrapper}>
                         <IconButton>
-                            <Link className={classes.commentsLink} to={"/item/" + post.id}>
-                                <ChatBubble color='secondary' />
+                            <Link
+                                className={classes.commentsLink}
+                                to={"/item/" + post.id}
+                            >
+                                <ChatBubble color="secondary" />
                             </Link>
                         </IconButton>
                         <div className={classes.numComments}>

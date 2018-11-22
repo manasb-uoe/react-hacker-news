@@ -20,6 +20,7 @@ const theme = createMuiTheme({
 export const App = () => {
     const [posts, setPosts] = useState({
         type: "news",
+        page: 1,
         items: [],
         loading: false
     });
@@ -30,10 +31,11 @@ export const App = () => {
         loading: false
     });
 
-    const loadPosts = async type => {
-        setPosts({ type, items: [], loading: true });
-        const fetchedPosts = await fetchPosts(type);
-        setPosts({ type, items: fetchedPosts, loading: false });
+    const loadPosts = async (type, page) => {
+        page = page ? page : 1;
+        setPosts({ type, page, items: [], loading: true });
+        const fetchedPosts = await fetchPosts(type, page);
+        setPosts({ type, page, items: fetchedPosts, loading: false });
     };
 
     const loadComments = async id => {

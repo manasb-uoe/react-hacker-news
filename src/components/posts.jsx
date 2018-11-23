@@ -16,9 +16,6 @@ const postsStyles = {
     centeredDiv: {
         textAlign: "center"
     },
-    post: {
-        marginBottom: "5px"
-    },
     navigationButtonsContainer: {
         display: "flex",
         flexDirection: "row",
@@ -76,6 +73,7 @@ const PostsWithoutStyles = ({
                             className={classes.post}
                             key={post.id}
                             post={post}
+                            history={history}
                         />
                     ))}
                     <div className={classes.navigationButtonsContainer}>
@@ -122,9 +120,7 @@ const PostsWithoutStyles = ({
 
     return (
         <div className={classes.postsContainer}>
-            <Grid container justify="center">
-                {renderPosts()}
-            </Grid>
+            <Grid container>{renderPosts()}</Grid>
         </div>
     );
 };
@@ -136,7 +132,11 @@ const postStyles = theme => ({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        marginBottom: "5px",
+        "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.08)"
+        }
     },
     centeredFlexRow: {
         display: "flex",
@@ -171,40 +171,27 @@ const postStyles = theme => ({
     }
 });
 
-const PostWithoutStyles = ({ post, classes, className }) => {
+const PostWithoutStyles = ({ post, classes }) => {
     return (
-        <Card className={className}>
-            <CardContent>
-                <div className={classes.cardContentWrapper}>
-                    <div className={classes.centeredFlexRow}>
-                        <div className={classes.points}>{post.points}</div>
-                        <a
-                            href={post.url}
-                            className={classes.link}
-                            target="_blank"
-                        >
-                            <div className={classes.title}>{post.title}</div>
-                            <div className={classes.subtitle}>
-                                {post.time_ago} by {post.user} | {post.domain}
-                            </div>
-                        </a>
+        <div className={classes.cardContentWrapper}>
+            <div className={classes.centeredFlexRow}>
+                <div className={classes.points}>{post.points}</div>
+                <a href={post.url} target="_blank" className={classes.link}>
+                    <div className={classes.title}>{post.title}</div>
+                    <div className={classes.subtitle}>
+                        {post.time_ago} by {post.user} | {post.domain}
                     </div>
-                    <div className={classes.commentsWrapper}>
-                        <IconButton>
-                            <Link
-                                className={classes.commentsLink}
-                                to={"/item/" + post.id}
-                            >
-                                <ChatBubble color="secondary" />
-                            </Link>
-                        </IconButton>
-                        <div className={classes.numComments}>
-                            {post.comments_count}
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+                </a>
+            </div>
+            <div className={classes.commentsWrapper}>
+                <Link to={'/item/' + post.id}>
+                    <IconButton>
+                        <ChatBubble color="secondary" />
+                    </IconButton>
+                </Link>
+                <div className={classes.numComments}>{post.comments_count}</div>
+            </div>
+        </div>
     );
 };
 

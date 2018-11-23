@@ -6,7 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import * as classnames from 'classnames';
+import * as classnames from "classnames";
 
 const commentsStyles = {
     mainContainer: {
@@ -29,13 +29,15 @@ const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
     );
 
     const renderComment = (comment, commentsSoFar = []) => {
-        commentsSoFar.push(<Comment key={comment.id} comment={comment} />);
+        commentsSoFar.push(
+            <Comment key={comment.id} comment={comment} />
+        );
         comment.comments.forEach(c => renderComment(c, commentsSoFar));
         return commentsSoFar;
     };
 
     return (
-        <Grid container justify="center" className={classes.mainContainer}>
+        <Grid container className={classes.mainContainer}>
             <Grid item md={12} lg={8}>
                 {comments.loading && (
                     <div className={classes.centeredDiv}>
@@ -45,8 +47,13 @@ const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
                 {!comments.loading && comments.post && (
                     <Post className={classes.post} post={comments.post} />
                 )}
-                {!comments.loading && comments.items.flatMap(comment => renderComment(comment))}
-                {!comments.loading && comments.items.length === 0 && <div className={classes.centeredDiv}>No comments found :(</div>}
+                {!comments.loading &&
+                    comments.items.flatMap(comment => renderComment(comment))}
+                {!comments.loading && comments.items.length === 0 && (
+                    <div className={classes.centeredDiv}>
+                        No comments found :(
+                    </div>
+                )}
             </Grid>
         </Grid>
     );
@@ -55,15 +62,18 @@ const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
 export const Comments = withStyles(commentsStyles)(CommentsWithoutStyles);
 
 const commentStyles = theme => ({
-    card: {
-        borderRadius: 0,
-        borderBottom: "1px solid #eee"
+    commentContainer: {
+        display: "flex",
+        flexDirection: "row"
     },
-    cardLevel0: {
-        borderLeft: '2px solid ' + theme.palette.primary.main
+    commentLevelLine: {
+        borderLeft: "2px solid " + theme.palette.secondary.main,    
+        marginRight: "10px"
+    },
+    card: {
+        marginLeft: '7px'
     },
     cardContent: {
-        paddingTop: "15px",
         paddingBottom: "0 !important"
     },
     content: {
@@ -85,14 +95,14 @@ const CommentWithoutStyles = ({ comment, classes }) => {
         return +level * 15;
     };
     return (
-        <React.Fragment>
-            <Card
-                className={classnames(classes.card, {[classes.cardLevel0]: comment.level === 0})}
-                style={{
-                    marginLeft: calculateLeftMargin(comment.level) + "px"
-                }}
+        <div className={classes.commentContainer}>
+            {[...new Array(comment.level).keys()].map(() => (
+                <div key={comment.id + comment.level} className={classes.commentLevelLine} />
+            ))}
+            <div
+                className={classes.card}
             >
-                <CardContent className={classes.cardContent}>
+                <div className={classes.cardContent}>
                     <div>
                         <span className={classes.user}>{comment.user}</span>
                         <span className={classes.time}>{comment.time_ago}</span>
@@ -101,9 +111,9 @@ const CommentWithoutStyles = ({ comment, classes }) => {
                         className={classes.content}
                         dangerouslySetInnerHTML={{ __html: comment.content }}
                     />
-                </CardContent>
-            </Card>
-        </React.Fragment>
+                </div>
+            </div>
+        </div>
     );
 };
 

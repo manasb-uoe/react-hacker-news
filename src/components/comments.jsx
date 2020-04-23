@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
-import { fetchComments } from "../api";
-import { Post } from "./posts";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import * as classnames from "classnames";
+import withStyles from "@material-ui/core/styles/withStyles";
+import React, { useEffect, useContext } from "react";
+import { Post } from "./posts";
+import { HNStoreContext } from "../store";
+import { observer } from "mobx-react";
 
 const commentsStyles = {
     mainContainer: {
@@ -20,10 +18,12 @@ const commentsStyles = {
     }
 };
 
-const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
+const CommentsWithoutStyles = observer(({ classes, match }) => {
+    const store = useContext(HNStoreContext);
+    
     useEffect(
         () => {
-            loadComments(match.params.itemId);
+            store.setItemId(match.params.itemId);
         },
         [match.path]
     );
@@ -39,17 +39,17 @@ const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
     return (
         <Grid container className={classes.mainContainer}>
             <Grid item md={12} lg={8}>
-                {comments.loading && (
+                {store.commentsLoading && (
                     <div className={classes.centeredDiv}>
                         <CircularProgress />
                     </div>
                 )}
-                {!comments.loading && comments.post && (
-                    <Post className={classes.post} post={comments.post} />
+                {!store.commentsLoading && store.selectedPost && (
+                    <Post className={classes.post} post={store.selectedPost} />
                 )}
-                {!comments.loading &&
-                    comments.items.flatMap(comment => renderComment(comment))}
-                {!comments.loading && comments.items.length === 0 && (
+                {!store.commentsLoading &&
+                    store.comments.flatMap(comment => renderComment(comment))}
+                {!store.commentsLoading && store.comments.length === 0 && (
                     <div className={classes.centeredDiv}>
                         No comments found :(
                     </div>
@@ -57,7 +57,7 @@ const CommentsWithoutStyles = ({ classes, comments, match, loadComments }) => {
             </Grid>
         </Grid>
     );
-};
+});
 
 export const Comments = withStyles(commentsStyles)(CommentsWithoutStyles);
 
@@ -91,13 +91,10 @@ const commentStyles = theme => ({
 });
 
 const CommentWithoutStyles = ({ comment, classes }) => {
-    const calculateLeftMargin = level => {
-        return +level * 15;
-    };
     return (
         <div className={classes.commentContainer}>
-            {[...new Array(comment.level).keys()].map(() => (
-                <div key={comment.id + comment.level} className={classes.commentLevelLine} />
+            {[...new Array(comment.level).keys()].map((_, index) => (
+                <div key={index} className={classes.commentLevelLine} />
             ))}
             <div
                 className={classes.card}

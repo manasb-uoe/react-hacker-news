@@ -7,7 +7,7 @@ webpackCommon.entry = {
 };
 
 webpackCommon.output = {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist')
 };
 
@@ -23,4 +23,4 @@ webpackCommon.plugins = [
     })
 ];
 
-module.exports = webpackCommon;
+module.exports = webpackCommon; 
